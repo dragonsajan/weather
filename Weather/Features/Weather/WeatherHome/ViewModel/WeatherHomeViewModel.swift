@@ -8,11 +8,18 @@
 import Combine
 import SwiftUI
 
+// Possible Navigation
+enum WeatherHomeAction {
+    case navigate(WeatherData)
+    case delete(WeatherData)
+}
+
 @MainActor
 final class WeatherHomeViewModel: ObservableObject {
     
     // MARK: - Dependencies
-    private let repository: WeatherRepositoryProtocol
+    fileprivate let repository: WeatherRepositoryProtocol
+    fileprivate weak var coordinator: MainCoordinator?
     
     // MARK: - UI State
     @Published private(set) var weatherList: [WeatherData] = []
@@ -22,15 +29,26 @@ final class WeatherHomeViewModel: ObservableObject {
     private var fetchTask: Task<Void, Never>?
     
     // MARK: - Init
-    init(repository: WeatherRepositoryProtocol) {
+    init(repository: WeatherRepositoryProtocol, coordinator: MainCoordinator) {
         self.repository = repository
+        self.coordinator = coordinator
     }
     
-    func delete(_ weather: WeatherData) {
-        weatherList.removeAll { $0.id == weather.id }
+}
+
+// MARK: - Navigations and Actions
+extension WeatherHomeViewModel {
+    
+    func handle(_ action: WeatherHomeAction) {
+        switch action {
+        case .navigate(let data):
+            coordinator?.push(.weatherDetail(data: data))
+
+        case .delete(let data):
+            weatherList.removeAll { $0.id == data.id }
+        }
     }
-    
-    
+
 }
 
 // MARK: - Api Calls

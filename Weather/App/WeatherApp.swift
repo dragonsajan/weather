@@ -11,11 +11,31 @@ import CoreData
 @main
 struct WeatherApp: App {
     let persistenceController = PersistenceController.shared
+    
+    @StateObject private var coordinator: MainCoordinator
 
+//    var body: some Scene {
+//        WindowGroup {
+//            WeatherHomeView(viewModel: WeatherHomeViewModel(repository: WeatherRepository(apiService: ApiService())))
+//
+//        }
+//    }
+    
+    
+    
+    init() {
+        _coordinator = StateObject(wrappedValue: MainCoordinator())
+    }
+    
     var body: some Scene {
         WindowGroup {
-            WeatherHomeView(viewModel: WeatherHomeViewModel(repository: WeatherRepository(apiService: ApiService())))
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            NavigationStack(path: $coordinator.path) {
+                coordinator.build(.home)
+                    .navigationDestination(for: Route.self) { route in
+                        coordinator.build(route)
+                    }
+            }
         }
+        .environment(\.managedObjectContext, persistenceController.container.viewContext)
     }
 }

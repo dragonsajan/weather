@@ -26,15 +26,15 @@ final class MainCoordinator: ObservableObject {
         path = NavigationPath()
     }
     
-//    @ViewBuilder
-//    func build(_ route: Route) -> some View {
-//        switch route {
-//        case .home:
-//            WeatherHomeView(viewModel: WeatherHomeViewModel(repository: WeatherRepository(apiService: ApiService()), coordinator: self))
-//            
-//        case .cityDetail(let cityWeather):
-//            WeatherDetailView()
-//        }
-//    }
+    @ViewBuilder
+    func build(_ route: Route) -> some View {
+        switch route {
+        case .home:
+            WeatherHomeView(viewModel: WeatherHomeViewModel(repository: WeatherRepository(apiService: ApiService()), coordinator: self))
+            
+        case .weatherDetail(let data):
+            WeatherDetailView(weatherData: data)
+        }
+    }
 }
 

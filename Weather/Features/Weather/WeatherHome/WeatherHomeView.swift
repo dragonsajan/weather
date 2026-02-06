@@ -15,7 +15,8 @@ struct WeatherHomeView: View {
         NavigationStack {
             ZStack {
                 GradientView()
-                MainView(weatherList: viewModel.weatherList, onDelete: viewModel.delete)
+                WeatherListView(weatherList: viewModel.weatherList,
+                                                   action: viewModel.handle)
             }
             .appNavigationBar(title: "Weather",  trailingButton: .more(action: {}))
         }
@@ -25,78 +26,37 @@ struct WeatherHomeView: View {
     }
 }
 
-// Main View
-fileprivate struct MainView: View {
-
-    let weatherList: [WeatherData]
-    let onDelete: (WeatherData) -> Void
-
-    var body: some View {
-        WeatherListView(
-            weatherList: weatherList,
-            onDelete: onDelete
-        )
-        .padding(.top, .appXLarge)
-    }
-}
-
 
 fileprivate struct WeatherListView: View {
 
+    // Data
     let weatherList: [WeatherData]
-    let onDelete: (WeatherData) -> Void
+
+    // Action dispatcher: this will let viewmodel know what to do with single call
+    let action: (WeatherHomeAction) -> Void
+    
 
     var body: some View {
         List {
             ForEach(weatherList) { weather in
-                NavigationLink {
-                    WeatherDetailView(weatherData: weather)
-                } label: {
-                    WeatherTileView(weatherData: weather)
-                }
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
-                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                    Button(role: .destructive) {
-                        onDelete(weather)
-                    } label: {
-                        Image(systemName: "trash")
+                WeatherTileView(weatherData: weather)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        action(.navigate(weather))
                     }
-                }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button(role: .destructive) {
+                            action(.delete(weather))
+                        } label: {
+                            Image(systemName: "trash")
+                        }
+                    }
             }
         }
         .listStyle(.plain)
     }
 }
 
-
-//fileprivate struct WeatherListView: View {
-//
-//    let weatherList: [WeatherData]
-//    let onDelete: (WeatherData) -> Void
-//
-//    var body: some View {
-//        List {
-//            ForEach(weatherList) { weather in
-//                WeatherTileView(weatherData: weather)
-//                    .listRowBackground(Color.clear)
-//                    .listRowSeparator(.hidden)
-//                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-//                        Button(role: .destructive) {
-//                            onDelete(weather)
-//                        } label: {
-//                            Image(systemName: "trash")
-//                        }
-//                    }
-//            }
-//        }
-//        .listStyle(.plain)
-//    }
-//}
-
-#Preview {
-    WeatherHomeView(
-        viewModel: WeatherHomeViewModel(repository: WeatherRepository(apiService: ApiService()))
-    )
-}
 
