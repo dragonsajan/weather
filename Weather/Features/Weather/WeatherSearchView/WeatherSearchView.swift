@@ -12,7 +12,7 @@ import SwiftUI
 struct WeatherSearchView: View {
 
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var viewModel = WeatherSearchViewModel()
+    @StateObject private var viewModel = WeatherSearchViewModel(repository: WeatherRepository(apiService: ApiService()))
 
     /// Return selected city back to caller
     let onSelect: (CityData) -> Void

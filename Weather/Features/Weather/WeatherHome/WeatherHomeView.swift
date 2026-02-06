@@ -60,9 +60,7 @@ extension WeatherHomeView {
                 }
                 .sheet(isPresented: $viewModel.isSearchPresented) {
                     WeatherSearchView { city in
-                        Task {
-                                    await viewModel.addCity(city)
-                                }
+                        Task { await viewModel.addCity(city) }
                     }
                 }
                 

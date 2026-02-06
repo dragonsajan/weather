@@ -16,7 +16,7 @@ final class WeatherRepository: WeatherRepositoryProtocol {
         self.apiService = apiService
     }
     
-    func fetchWeathForLocation(latitude: Double, longitude: Double) async -> Result<WeatherData, ApiError> {
+    func fetchWeatherForLocation(latitude: Double, longitude: Double) async -> Result<WeatherData, ApiError> {
         let endPoint = WeatherEndpoint.usingLocation(latitude: latitude, longitude: longitude)
         let response: Result<WeatherResponse, ApiError> = await apiService.request(endPoint)
 

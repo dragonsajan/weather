@@ -9,7 +9,7 @@ import Foundation
 
 struct WeatherData: Identifiable, Hashable {
     
-    let id = UUID()
+    let id: UUID
     let city: String
     let subtitle: String
     let condition: String
@@ -17,6 +17,8 @@ struct WeatherData: Identifiable, Hashable {
     let high: String
     let low: String
     let iconName: String
+    let latitude: Double
+    let longitude: Double
     
     // Conver the give icon name into full url to load in view
     var iconURL: URL {
@@ -26,8 +28,50 @@ struct WeatherData: Identifiable, Hashable {
     var temperatureValue: Double {
         Double(temperature.dropLast(2)) ?? 0.0
     }
-
     
+    // Alternate initilizer
+    // MARK: - Init from CoreData (placeholder)
+        init(from entity: CDWeather) {
+            self.id = LocationID.from(latitude: entity.latitude, longitude: entity.longitude)
+            self.city = entity.city ?? "—"
+            self.subtitle = entity.subtitle ?? "—"
+            self.condition = "—"
+            self.temperature = "—"
+            self.high = "—"
+            self.low = "—"
+            self.iconName = entity.iconName ?? "questionmark"
+            self.latitude = entity.latitude
+            self.longitude = entity.longitude
+        }
+    
+    // Alternate initilizer
+        init(latitude: Double, longitude: Double) {
+            self.id = LocationID.from(latitude: latitude, longitude: longitude)
+            self.city = "—"
+            self.subtitle = "—"
+            self.condition = "—"
+            self.temperature = "—"
+            self.high = "—"
+            self.low = "—"
+            self.iconName = "questionmark"
+            self.latitude = latitude
+            self.longitude = longitude
+        }
+    
+    init(city: CityData) {
+        self.id = LocationID.from(latitude: city.latitude, longitude: city.longitude)
+        self.city = "-"
+        self.subtitle = "—"
+        self.condition = "—"
+        self.temperature = "—"
+        self.high = "—"
+        self.low = "—"
+        self.iconName = "questionmark"
+        self.latitude = city.latitude
+        self.longitude = city.longitude
+    }
+
+
     /// Initilize to make Weather data using api response class
     /// - Parameter response: WeatherResponse api response class
     init?(from response: WeatherResponse) {
@@ -45,8 +89,10 @@ struct WeatherData: Identifiable, Hashable {
         let lowStr         = Self.formatKelvin(main.tempMin)
         let conditionStr  = weatherCondition.main ?? "Unknown"
         let iconStr       = weatherCondition.icon ?? "questionmark"
+        let lat           = response.coord?.lat ?? 0.0
+        let long          = response.coord?.lon ?? 0.0
 
-        
+        self.id          = LocationID.from(latitude: lat, longitude: long)
         self.city        = name
         self.subtitle    = "\(country) • Feels like \(feelsLikeStr)"
         self.condition   = conditionStr
@@ -54,6 +100,9 @@ struct WeatherData: Identifiable, Hashable {
         self.high        = highStr
         self.low         = lowStr
         self.iconName    = iconStr
+        self.latitude    = lat
+        self.longitude   = long
+        
     }
 
     
@@ -68,4 +117,5 @@ struct WeatherData: Identifiable, Hashable {
     }
     
 }
+
 
