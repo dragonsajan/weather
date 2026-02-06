@@ -2,8 +2,16 @@
 
 A simple iOS Weather application built using **SwiftUI** for UI and **Core Data** for local data persistence.  
 
+---
+
+## 📸 App Screenshots
+
+| Home | Search | Detail |
+|------|--------|--------|
+| ![](Resources/01.jpg) | ![](Resources/02.jpg) | ![](Resources/03.jpg) |
 
 ---
+
 
 ## Tech Stack
 
