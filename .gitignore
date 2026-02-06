@@ -39,3 +39,7 @@ playground.xcworkspace
 # Package.pins
 # Package.resolved
 .build/
+
+secret.xcconfig
+**/secret.xcconfig
+
