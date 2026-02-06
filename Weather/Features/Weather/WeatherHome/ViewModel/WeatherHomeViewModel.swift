@@ -28,6 +28,9 @@ final class WeatherHomeViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var showLocationPermissionAlert: Bool = false
     
+    @Published var searchText: String = ""
+    @Published var isSearchPresented: Bool = false
+    
     private var fetchTask: Task<Void, Never>?
     
     // MARK: - Init
@@ -46,12 +49,36 @@ final class WeatherHomeViewModel: ObservableObject {
 // MARK: - Navigations and Actions
 extension WeatherHomeViewModel {
     
+    func openSearch() {
+        isSearchPresented = true
+    }
+    
+    
+    func addWeather(_ data: WeatherData) {
+        if !weatherList.contains(data) {
+            weatherList.insert(data, at: 0)
+        }
+    }
+    
+    func addCity(_ city: CityData) async {
+        let result = await repository.fetchWeathForLocation(
+            latitude: city.latitude,
+            longitude: city.longitude
+        )
+
+        if case .success(let weather) = result {
+            weatherList.append(weather)
+        }
+    }
+
+    
     func openAppSettings() {
         guard let url = URL(string: UIApplication.openSettingsURLString),
               UIApplication.shared.canOpenURL(url) else { return }
 
         UIApplication.shared.open(url)
     }
+    
     
     func handle(_ action: WeatherHomeAction) {
         switch action {

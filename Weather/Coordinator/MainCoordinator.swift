@@ -34,6 +34,7 @@ final class MainCoordinator: ObservableObject {
             
         case .weatherDetail(let data):
             WeatherDetailView(weatherData: data)
+            
         }
     }
 }

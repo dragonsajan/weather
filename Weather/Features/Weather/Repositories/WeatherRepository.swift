@@ -32,5 +32,25 @@ final class WeatherRepository: WeatherRepositoryProtocol {
         }
     }
     
+    
+    func fetchCityList(keyword: String) async -> Result<[CityData], ApiError> {
+
+        let endpoint = WeatherEndpoint.search(keyword: keyword)
+        let response: Result<[CityResponse], ApiError> =
+            await apiService.request(endpoint)
+
+        switch response {
+
+        case .success(let cityResponses):
+            let cityList = CityData.map(from: cityResponses)
+
+            // Empty result is VALID for search
+            return .success(cityList)
+
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
+    
 }
 

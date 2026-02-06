@@ -19,6 +19,7 @@ struct WeatherHomeView: View {
                     title: "Weather",
                     trailingButton: .more(action: {})
                 )
+                
         }
         .loadingOverlay(
             isLoading: $viewModel.isLoading,
@@ -53,44 +54,24 @@ extension WeatherHomeView {
     var content: some View {
         ZStack {
             GradientView()
-            WeatherListView(
-                weatherList: viewModel.weatherList,
-                action: viewModel.handle
-            )
-        }
-    }
-}
-
-
-fileprivate struct WeatherListView: View {
-
-    // Data
-    let weatherList: [WeatherData]
-
-    // Action dispatcher: this will let viewmodel know what to do with single call
-    let action: (WeatherHomeAction) -> Void
-    
-
-    var body: some View {
-        List {
-            ForEach(weatherList) { weather in
-                WeatherTileView(weatherData: weather)
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        action(.navigate(weather))
+            VStack(spacing: 12) {
+                SearchBarView(placeholder: "Search city") {
+                    viewModel.openSearch()
+                }
+                .sheet(isPresented: $viewModel.isSearchPresented) {
+                    WeatherSearchView { city in
+                        Task {
+                                    await viewModel.addCity(city)
+                                }
                     }
-                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        Button(role: .destructive) {
-                            action(.delete(weather))
-                        } label: {
-                            Image(systemName: "trash")
-                        }
-                    }
-            }
+                }
+                
+               WeatherListView(
+                   weatherList: viewModel.weatherList,
+                   action: viewModel.handle
+               )
+           }
         }
-        .listStyle(.plain)
     }
 }
 

@@ -10,11 +10,16 @@ import Foundation
 enum WeatherEndpoint: ApiEndPoint {
     
     case usingLocation(latitude: Double, longitude: Double)
+    case search(keyword: String)
+    
+    func getAppid() -> URLQueryItem { URLQueryItem(name: "appid", value: AppSecrets.getValueFor(.weatherApiKey)) }
 
     var path: String {
         switch self {
             case .usingLocation:
-                return "weather"
+                return "/data/2.5/weather"
+            case .search:
+                return "/geo/1.0/direct"
         }
     }
     
@@ -24,7 +29,13 @@ enum WeatherEndpoint: ApiEndPoint {
                 return [
                     URLQueryItem(name: "lat", value: "\(latitude)"),
                     URLQueryItem(name: "lon", value: "\(longitude)"),
-                    URLQueryItem(name: "appid", value: AppSecrets.getValueFor(.weatherApiKey))
+                    getAppid()
+                ]
+            case .search(let keyword):
+                return [
+                    URLQueryItem(name: "q", value: keyword),
+                    URLQueryItem(name: "limit", value: "10"),
+                    getAppid()
                 ]
             }
         }

@@ -13,15 +13,6 @@ struct WeatherApp: App {
     let persistenceController = PersistenceController.shared
     
     @StateObject private var coordinator: MainCoordinator
-
-//    var body: some Scene {
-//        WindowGroup {
-//            WeatherHomeView(viewModel: WeatherHomeViewModel(repository: WeatherRepository(apiService: ApiService())))
-//
-//        }
-//    }
-    
-    
     
     init() {
         _coordinator = StateObject(wrappedValue: MainCoordinator())
