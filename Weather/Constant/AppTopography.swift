@@ -39,6 +39,7 @@ enum AppTypography {
 
         case .caption:
             return .caption
+            
         }
     }
 

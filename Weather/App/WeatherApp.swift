@@ -14,7 +14,7 @@ struct WeatherApp: App {
 
     var body: some Scene {
         WindowGroup {
-            WeatherHomeView(viewModel: WeatherHomeViewModel())
+            WeatherHomeView(viewModel: WeatherHomeViewModel(repository: WeatherRepository(apiService: ApiService())))
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }

@@ -37,6 +37,11 @@ actor ApiService: ApiServiceProtocol {
             
             // Decode success response
             let decoded = try JSONDecoder().decode(T.self, from: data)
+            #if DEBUG
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("API Response JSON:\n\(jsonString)")
+            }
+            #endif
             return .success(decoded)
             
         } catch let error as ApiError {
