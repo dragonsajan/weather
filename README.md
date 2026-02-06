@@ -19,7 +19,7 @@ A simple iOS Weather application built using **SwiftUI** for UI and **Core Data*
 
 - macOS 13+
 - Xcode 15+
-- iOS 16+
+- iOS 17+
 - Swift 5.9+
 
 ---
