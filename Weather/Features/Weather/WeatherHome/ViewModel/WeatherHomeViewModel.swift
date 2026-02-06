@@ -7,6 +7,7 @@
 
 import Combine
 import SwiftUI
+internal import _LocationEssentials
 
 // Possible Navigation
 enum WeatherHomeAction {
@@ -25,6 +26,7 @@ final class WeatherHomeViewModel: ObservableObject {
     @Published private(set) var weatherList: [WeatherData] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
+    @Published var showLocationPermissionAlert: Bool = false
     
     private var fetchTask: Task<Void, Never>?
     
@@ -34,10 +36,22 @@ final class WeatherHomeViewModel: ObservableObject {
         self.coordinator = coordinator
     }
     
+    
+    func validateAndLoadWeather() {
+        loadWeatherForCurrentLocation()
+    }
+    
 }
 
 // MARK: - Navigations and Actions
 extension WeatherHomeViewModel {
+    
+    func openAppSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString),
+              UIApplication.shared.canOpenURL(url) else { return }
+
+        UIApplication.shared.open(url)
+    }
     
     func handle(_ action: WeatherHomeAction) {
         switch action {
@@ -53,8 +67,37 @@ extension WeatherHomeViewModel {
 
 // MARK: - Api Calls
 extension WeatherHomeViewModel {
+    
+    fileprivate func loadWeatherForCurrentLocation() {
+        isLoading = true
+        errorMessage = nil
 
-    func fetchWeatherDataForLocation(latitude: Double = 44.34, longitude: Double = 10.99, force: Bool = false) async {
+        LocationService.shared.getCurrentLocation { [weak self] result in
+            guard let self else { return }
+
+            Task { @MainActor in
+                switch result {
+                case .success(let coordinate):
+                    await self.fetchWeatherDataForLocation(latitude: coordinate.latitude,
+                                                           longitude: coordinate.longitude)
+
+                case .failure(let error):
+                    self.isLoading = false
+
+                    if let locationError = error as? LocationError,
+                       locationError == .permissionDenied {
+                        self.errorMessage = locationError.localizedDescription
+                        self.showLocationPermissionAlert = true
+                    } else {
+                        self.errorMessage = error.localizedDescription
+                    }
+                }
+            }
+        }
+    }
+    
+
+    fileprivate func fetchWeatherDataForLocation(latitude: Double = 44.34, longitude: Double = 10.99, force: Bool = false) async {
 
         // Check to stop paralle and duplicate call
         if fetchTask != nil && !force { return }
