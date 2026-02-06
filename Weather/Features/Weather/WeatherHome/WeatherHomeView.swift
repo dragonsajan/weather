@@ -49,21 +49,50 @@ fileprivate struct WeatherListView: View {
     var body: some View {
         List {
             ForEach(weatherList) { weather in
-                WeatherTileView(weatherData: weather)
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
-                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        Button(role: .destructive) {
-                            onDelete(weather)
-                        } label: {
-                            Image(systemName: "trash")
-                        }
+                NavigationLink {
+                    WeatherDetailView(weatherData: weather)
+                } label: {
+                    WeatherTileView(weatherData: weather)
+                }
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                    Button(role: .destructive) {
+                        onDelete(weather)
+                    } label: {
+                        Image(systemName: "trash")
                     }
+                }
             }
         }
         .listStyle(.plain)
     }
 }
+
+
+//fileprivate struct WeatherListView: View {
+//
+//    let weatherList: [WeatherData]
+//    let onDelete: (WeatherData) -> Void
+//
+//    var body: some View {
+//        List {
+//            ForEach(weatherList) { weather in
+//                WeatherTileView(weatherData: weather)
+//                    .listRowBackground(Color.clear)
+//                    .listRowSeparator(.hidden)
+//                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+//                        Button(role: .destructive) {
+//                            onDelete(weather)
+//                        } label: {
+//                            Image(systemName: "trash")
+//                        }
+//                    }
+//            }
+//        }
+//        .listStyle(.plain)
+//    }
+//}
 
 #Preview {
     WeatherHomeView(

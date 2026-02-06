@@ -15,10 +15,13 @@ import SwiftUI
 ///
 /// You can customize the gradient by providing a color array
 struct GradientView: View {
-    
-    /// color list for gradient view creation
-    let colorList: [Color] = [Color.blue.opacity(0.9), Color.blue.opacity(0.6), Color.cyan.opacity(0.5)]
-    
+
+    let colorList: [Color]
+
+    init(colorList: [Color] = [.blue.opacity(0.9), .blue.opacity(0.6), .cyan.opacity(0.5)]) {
+        self.colorList = colorList
+    }
+
     var body: some View {
         LinearGradient(
             colors: colorList,
