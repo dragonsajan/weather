@@ -8,7 +8,7 @@ A simple iOS Weather application built using **SwiftUI** for UI and **Core Data*
 
 | Home | Search | Detail |
 |------|--------|--------|
-| ![](Resources/01.jpg) | ![](Resources/02.jpg) | ![](Resources/03.jpg) |
+| ![](./Weather/Resources/01.jpg) | ![](./Weather/Resources/02.jpg) | ![](./Weather/Resources/03.jpg) |
 
 ---
 
