@@ -45,8 +45,8 @@ struct WeatherData: Identifiable, Hashable {
         }
     
     // Alternate initilizer
-        init(latitude: Double, longitude: Double) {
-            self.id = LocationID.from(latitude: latitude, longitude: longitude)
+        init(latitude: Double, longitude: Double, city: String = "-") {
+            self.id = LocationID.from(latitude: latitude, longitude: longitude )
             self.city = "—"
             self.subtitle = "—"
             self.condition = "—"

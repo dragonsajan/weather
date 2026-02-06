@@ -8,8 +8,13 @@
 
 import CoreData
 
+protocol CoreDataServiceProtocol {
+    func save(weather: WeatherData)
+    func fetchAllWeatherData() -> [WeatherData]
+    func delete(weather: WeatherData)
+}
 
-final class CoreDataService {
+final class CoreDataService : CoreDataServiceProtocol {
     
     static let shared = CoreDataService()
     

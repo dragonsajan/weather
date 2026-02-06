@@ -10,7 +10,7 @@ import SwiftUI
 import Combine
 
 @MainActor
-final class MainCoordinator: ObservableObject {
+final class MainCoordinator: ObservableObject, Coordinator {
     
     @Published var path = NavigationPath()
 
@@ -30,7 +30,8 @@ final class MainCoordinator: ObservableObject {
     func build(_ route: Route) -> some View {
         switch route {
         case .home:
-            WeatherHomeView(viewModel: WeatherHomeViewModel(repository: WeatherRepository(apiService: ApiService()), coordinator: self))
+            let viewModel = WeatherHomeViewModel(repository: WeatherRepository(apiService: ApiService()), coordinator: self, coreData: CoreDataService(), locationService: LocationService())
+            WeatherHomeView(viewModel: viewModel)
             
         case .weatherDetail(let data):
             WeatherDetailView(weatherData: data)

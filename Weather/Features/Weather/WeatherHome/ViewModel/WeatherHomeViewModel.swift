@@ -8,14 +8,6 @@
 import Combine
 import SwiftUI
 internal import _LocationEssentials
-//
-//  WeatherHomeViewModel.swift
-//  Weather
-//
-
-import Combine
-import SwiftUI
-internal import _LocationEssentials
 
 // Possible Navigation
 enum WeatherHomeAction {
@@ -27,8 +19,9 @@ final class WeatherHomeViewModel: ObservableObject {
 
     // MARK: - Dependencies
     fileprivate let repository: WeatherRepositoryProtocol
-    fileprivate weak var coordinator: MainCoordinator?
-    private let coreData = CoreDataService.shared
+    fileprivate weak var coordinator: (any Coordinator)?
+    fileprivate let coreData: CoreDataServiceProtocol
+    fileprivate let locationService: LocationServiceProtocol
 
     // MARK: - UI State
     @Published private(set) var weatherList: [WeatherData] = []
@@ -41,12 +34,21 @@ final class WeatherHomeViewModel: ObservableObject {
     
     // For opening search view
     @Published var isSearchPresented: Bool = false
+    
+    var hasLoadedOnce: Bool = false
 
     // MARK: - Init
-    init(repository: WeatherRepositoryProtocol, coordinator: MainCoordinator) {
-        self.repository = repository
-        self.coordinator = coordinator
-    }
+    init(
+            repository: WeatherRepositoryProtocol,
+            coordinator: (any Coordinator)?,
+            coreData: CoreDataServiceProtocol,
+            locationService: LocationServiceProtocol
+        ) {
+            self.repository = repository
+            self.coordinator = coordinator
+            self.coreData = coreData
+            self.locationService = locationService
+        }
 
     /// View data starts from here
     ///
@@ -73,24 +75,12 @@ final class WeatherHomeViewModel: ObservableObject {
     ///
     /// after that it will refresh the
     func validateAndLoadWeather() {
-        if isInitialLoad {
-            Task {
-                await refreshAllWeather()
-            }
+        if hasLoadedOnce {
+            Task { await refreshAllWeather() }
         } else {
             getCurrentLocationWeather()
+            hasLoadedOnce = true
         }
-        isInitialLoad = false
-    }
-}
-
-// MARK: - Initial Load
-extension WeatherHomeViewModel {
-
-    private func loadInitialWeather(status: Bool = false) {
-        
-        
-        
     }
 }
 
@@ -145,7 +135,7 @@ extension WeatherHomeViewModel {
         isLoading = true
         errorMessage = nil
         
-        LocationService.shared.getCurrentLocation { [weak self] result in
+        self.locationService.getCurrentLocation { [weak self] result in
             guard let self else { return }
             
             Task {

@@ -22,14 +22,22 @@ enum LocationError: LocalizedError {
     }
 }
 
-final class LocationService: NSObject {
+
+protocol LocationServiceProtocol {
+    func getCurrentLocation(completion: @escaping (Result<CLLocationCoordinate2D, Error>) -> Void)
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager)
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error)
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
+}
+
+final class LocationService: NSObject, LocationServiceProtocol {
 
     static let shared = LocationService()
 
     private let manager = CLLocationManager()
     private var completion: ((Result<CLLocationCoordinate2D, Error>) -> Void)?
 
-    private override init() {
+    override init() {
         super.init()
         manager.delegate = self
     }
@@ -77,8 +85,7 @@ extension LocationService: CLLocationManagerDelegate {
         }
     }
 
-    func locationManager(_ manager: CLLocationManager,
-                         didUpdateLocations locations: [CLLocation]) {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let coordinate = locations.first?.coordinate else {
             completion?(.failure(LocationError.locationUnavailable))
             completion = nil
@@ -89,8 +96,7 @@ extension LocationService: CLLocationManagerDelegate {
         completion = nil
     }
 
-    func locationManager(_ manager: CLLocationManager,
-                         didFailWithError error: Error) {
+    func locationManager(_ manager: CLLocationManager,didFailWithError error: Error) {
         completion?(.failure(error))
         completion = nil
     }
