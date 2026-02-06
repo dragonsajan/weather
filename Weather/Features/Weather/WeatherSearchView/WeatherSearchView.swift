@@ -45,6 +45,7 @@ private extension WeatherSearchView {
             .disableAutocorrection(true)
             .textFieldStyle(.roundedBorder)
             .padding()
+            .accessibilityIdentifier("search_city_textfield")
     }
     
     var content: some View {

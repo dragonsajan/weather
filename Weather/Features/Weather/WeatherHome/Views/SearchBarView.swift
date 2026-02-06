@@ -30,5 +30,7 @@ struct SearchBarView: View {
         .onTapGesture {
             onTap()
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityIdentifier("search_button")
     }
 }

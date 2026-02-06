@@ -33,6 +33,7 @@ struct WeatherListView: View {
                             Image(systemName: "trash")
                         }
                     }
+                    .accessibilityIdentifier("weather_cell_\(weather.latitude)_\(weather.longitude)")
             }
         }
         .listStyle(.plain)
