@@ -6,7 +6,7 @@ A simple iOS Weather application built using **SwiftUI** for UI and **Core Data*
 
 ## 📸 App Screenshots
 
-| Home | Search | Detail |
+| Home | Detail | Search |
 |------|--------|--------|
 | ![](./Weather/Resources/01.jpg) | ![](./Weather/Resources/02.jpg) | ![](./Weather/Resources/03.jpg) |
 
